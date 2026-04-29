@@ -7,9 +7,9 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-const MONGO_URI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/classync';
+const MONGO_URI = process.env.MONGO_URI;
 
-// Routes
+// Import Routes
 import seedRoutes from './routes/seed.js';
 import authRoutes from './routes/auth.js';
 import classesRoutes from './routes/classes.js';
@@ -18,6 +18,20 @@ import classesRoutes from './routes/classes.js';
 app.use(cors());
 app.use(express.json());
 
+// Root Route
+app.get('/', (req, res) => {
+  res.status(200).json({ message: 'Classync Backend is up and running!' });
+});
+
+// Test route
+app.get('/api/status', (req, res) => {
+  res.status(200).json({
+    status: 'success',
+    message: 'Backend is running and connected!'
+  });
+});
+
+// Route handlers
 app.use('/api/seed', seedRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/classes', classesRoutes);
@@ -27,12 +41,7 @@ mongoose.connect(MONGO_URI)
   .then(() => console.log('Connected to MongoDB successfully!'))
   .catch((err) => console.error('MongoDB connection error:', err));
 
-// Basic route
-app.get('/api/status', (req, res) => {
-  res.json({ status: 'success', message: 'Backend is running and connected to frontend!' });
-});
-
 // Start server
 app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+  console.log(`Server is running on port ${PORT}`);
 });
